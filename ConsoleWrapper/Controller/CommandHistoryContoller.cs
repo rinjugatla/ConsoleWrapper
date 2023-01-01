@@ -48,8 +48,9 @@ namespace ConsoleWrapper.Controller
         /// 前のコマンドを取得
         /// </summary>
         /// <returns>コマンド</returns>
-        public string PrevCommand()
+        public string? PrevCommand()
         {
+            if(Histories.Count == 0) { return null; }
             if (SelectedIndex == 0) { return Histories[0]; }
 
             SelectedIndex -= 1;
@@ -60,9 +61,10 @@ namespace ConsoleWrapper.Controller
         /// 次のコマンドを取得
         /// </summary>
         /// <returns>コマンド</returns>
-        public string NextCommand()
+        public string? NextCommand()
         {
-            if(SelectedIndex == Histories.Count - 1) { return Histories[Histories.Count - 1]; }
+            if (Histories.Count == 0) { return null; }
+            if (SelectedIndex == Histories.Count - 1) { return Histories[Histories.Count - 1]; }
 
             SelectedIndex += 1;
             return Histories[SelectedIndex];
