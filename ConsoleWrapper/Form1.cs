@@ -46,15 +46,13 @@ namespace ConsoleWrapper
 
         private void Command_ComboBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.PageUp || e.KeyCode == Keys.PageDown)
-            {
-                e.Handled = true;
+            if (!(e.KeyCode == Keys.PageUp || e.KeyCode == Keys.PageDown)) { return; }
 
-                string command = e.KeyCode == Keys.PageUp ? HistoryContoller.PrevCommand() : HistoryContoller.NextCommand();
-                Command_ComboBox.Text = command;
+            // 入力をキャンセル
+            e.Handled = true;
 
-                return;
-            }
+            string command = e.KeyCode == Keys.PageUp ? HistoryContoller.PrevCommand() : HistoryContoller.NextCommand();
+            Command_ComboBox.Text = command;
         }
 
         /// <summary>
