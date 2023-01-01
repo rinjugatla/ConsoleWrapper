@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using ConsoleWrapper.Controller;
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace ConsoleWrapper
@@ -6,6 +7,7 @@ namespace ConsoleWrapper
     public partial class Form1 : Form
     {
         Process? process = null;
+        CommandHistoryContoller HistoryContoller = new CommandHistoryContoller();
 
         public Form1()
         {
@@ -37,7 +39,9 @@ namespace ConsoleWrapper
             if (process == null) { return; }
             if (e.KeyCode != Keys.Enter) { return; }
 
-            process.StandardInput.WriteLine(Command_ComboBox.Text);
+            string command = Command_ComboBox.Text;
+            HistoryContoller.Add(command);
+            process.StandardInput.WriteLine(command);
         }
 
         private void Command_ComboBox_KeyDown(object sender, KeyEventArgs e)
@@ -45,6 +49,10 @@ namespace ConsoleWrapper
             if (e.KeyCode == Keys.PageUp || e.KeyCode == Keys.PageDown)
             {
                 e.Handled = true;
+
+                string command = e.KeyCode == Keys.PageUp ? HistoryContoller.PrevCommand() : HistoryContoller.NextCommand();
+                Command_ComboBox.Text = command;
+
                 return;
             }
         }
