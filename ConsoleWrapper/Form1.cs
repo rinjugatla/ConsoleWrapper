@@ -59,14 +59,15 @@ namespace ConsoleWrapper
         /// <summary>
         /// コントロールの有効化状態を更新
         /// </summary>
-        /// <param name="forceRunning">強制的に切り替える場合に使用(true: running)</param>
-        private void UpdateControllEnable(bool? forceRunning = null)
+        /// <param name="forceEnabled">強制的に切り替える場合に使用(true: running)</param>
+        private void UpdateControllEnable(bool? forceEnabled = null)
         {
-            bool running = forceRunning ?? process != null;
-         
-            Run_Button.Enabled = !running;
-            Kill_Button.Enabled = running;
-            Command_ComboBox.Enabled = running;
+            bool enabled = forceEnabled ?? process != null;
+
+            ExePath_TextBox.Enabled = !enabled;
+            Run_Button.Enabled = !enabled;
+            Kill_Button.Enabled = enabled;
+            Command_ComboBox.Enabled = enabled;
         }
 
         private void StartProcess()
