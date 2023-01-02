@@ -51,7 +51,7 @@ namespace ConsoleWrapper
             // 入力をキャンセル
             e.Handled = true;
 
-            string command = e.KeyCode == Keys.PageUp ? HistoryContoller.PrevCommand() : HistoryContoller.NextCommand();
+            string? command = e.KeyCode == Keys.PageUp ? HistoryContoller.PrevCommand() : HistoryContoller.NextCommand();
             if (command == null) { return; }
             Command_ComboBox.Text = command;
         }
