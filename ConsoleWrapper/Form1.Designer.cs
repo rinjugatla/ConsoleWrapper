@@ -52,6 +52,7 @@
             // 
             // Command_ComboBox
             // 
+            this.Command_ComboBox.Enabled = false;
             this.Command_ComboBox.FormattingEnabled = true;
             this.Command_ComboBox.Items.AddRange(new object[] {
             "a",
