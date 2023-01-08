@@ -8,23 +8,23 @@ namespace ConsoleWrapper
     {
         Process? process = null;
         CommandHistoryContoller HistoryContoller = new CommandHistoryContoller();
+        bool IsRunning => process != null && !process.HasExited;
 
         public Form1()
         {
             InitializeComponent();
         }
 
-        private void Run_Button_Click(object sender, EventArgs e)
+        private void ProcessControl_Button_Click(object sender, EventArgs e)
         {
-            if (process != null && process.HasExited) { process = null; }
-            if (process != null) { return; }
-
-            StartProcess();
-        }
-
-        private void Kill_Button_Click(object sender, EventArgs e)
-        {
-            KillProcess();
+            if (IsRunning)
+            {
+                KillProcess();
+            }
+            else
+            {
+                StartProcess();
+            }
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -62,12 +62,22 @@ namespace ConsoleWrapper
         /// <param name="forceEnabled">強制的に切り替える場合に使用(true: running)</param>
         private void UpdateControllEnable(bool? forceEnabled = null)
         {
-            bool enabled = forceEnabled ?? process != null;
+            bool enabled = forceEnabled ?? IsRunning;
 
             ExePath_TextBox.Enabled = !enabled;
-            Run_Button.Enabled = !enabled;
-            Kill_Button.Enabled = enabled;
             Command_ComboBox.Enabled = enabled;
+        }
+
+        /// <summary>
+        /// プロセス制御ボタンを切替
+        /// </summary>
+        /// <param name="forceEnabled">強制的に切り替える場合に使用(true: running)</param>
+        private void UpdateProcessControll_Button(bool? forceEnabled = null)
+        {
+            bool isRunning = forceEnabled ?? IsRunning;
+
+            ProcessControl_Button.Text = isRunning ? "Kill" : "Run";
+            ProcessControl_Button.BackColor = isRunning ? Color.Salmon : Color.Chartreuse;
         }
 
         private void StartProcess()
@@ -91,7 +101,11 @@ namespace ConsoleWrapper
                 {
                     Output_RichTextBox.SelectionLength = 0;
                     Output_RichTextBox.SelectionColor = Color.Black;
-                    if (e.Data == null) { UpdateControllEnable(false); }
+                    if (e.Data == null)
+                    {
+                        UpdateControllEnable(false);
+                        UpdateProcessControll_Button(false);
+                    }
                     else { Output_RichTextBox.AppendText($"{e.Data}\n"); }
                 });
             };
@@ -101,7 +115,11 @@ namespace ConsoleWrapper
                 {
                     Output_RichTextBox.SelectionLength = 0;
                     Output_RichTextBox.SelectionColor = Color.Red;
-                    if (e.Data == null) { UpdateControllEnable(false); }
+                    if (e.Data == null)
+                    {
+                        UpdateControllEnable(false);
+                        UpdateProcessControll_Button(false);
+                    }
                     else { Output_RichTextBox.AppendText($"{e.Data}\n"); }
                 });
             };
@@ -113,11 +131,13 @@ namespace ConsoleWrapper
             process.BeginErrorReadLine();
 
             UpdateControllEnable();
+            UpdateProcessControll_Button();
         }
 
         private void KillProcess()
         {
             UpdateControllEnable();
+            UpdateProcessControll_Button();
 
             if (process == null) { return; }
 
@@ -131,6 +151,7 @@ namespace ConsoleWrapper
             }
 
             UpdateControllEnable();
+            UpdateProcessControll_Button();
         }
     }
 }

@@ -29,10 +29,9 @@
         private void InitializeComponent()
         {
             this.Output_RichTextBox = new System.Windows.Forms.RichTextBox();
-            this.Run_Button = new System.Windows.Forms.Button();
             this.ExePath_TextBox = new System.Windows.Forms.TextBox();
-            this.Kill_Button = new System.Windows.Forms.Button();
             this.Command_ComboBox = new System.Windows.Forms.ComboBox();
+            this.ProcessControl_Button = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // Output_RichTextBox
@@ -43,36 +42,13 @@
             this.Output_RichTextBox.TabIndex = 0;
             this.Output_RichTextBox.Text = "";
             // 
-            // Run_Button
-            // 
-            this.Run_Button.BackColor = System.Drawing.Color.Chartreuse;
-            this.Run_Button.Location = new System.Drawing.Point(632, 12);
-            this.Run_Button.Name = "Run_Button";
-            this.Run_Button.Size = new System.Drawing.Size(75, 23);
-            this.Run_Button.TabIndex = 1;
-            this.Run_Button.Text = "Run";
-            this.Run_Button.UseVisualStyleBackColor = false;
-            this.Run_Button.Click += new System.EventHandler(this.Run_Button_Click);
-            // 
             // ExePath_TextBox
             // 
             this.ExePath_TextBox.Location = new System.Drawing.Point(12, 13);
             this.ExePath_TextBox.Name = "ExePath_TextBox";
-            this.ExePath_TextBox.Size = new System.Drawing.Size(614, 23);
+            this.ExePath_TextBox.Size = new System.Drawing.Size(695, 23);
             this.ExePath_TextBox.TabIndex = 2;
             this.ExePath_TextBox.Text = "..\\..\\..\\..\\Child\\bin\\Debug\\net6.0\\Child.exe";
-            // 
-            // Kill_Button
-            // 
-            this.Kill_Button.BackColor = System.Drawing.Color.Salmon;
-            this.Kill_Button.Enabled = false;
-            this.Kill_Button.Location = new System.Drawing.Point(713, 12);
-            this.Kill_Button.Name = "Kill_Button";
-            this.Kill_Button.Size = new System.Drawing.Size(75, 23);
-            this.Kill_Button.TabIndex = 1;
-            this.Kill_Button.Text = "Kill";
-            this.Kill_Button.UseVisualStyleBackColor = false;
-            this.Kill_Button.Click += new System.EventHandler(this.Kill_Button_Click);
             // 
             // Command_ComboBox
             // 
@@ -89,15 +65,25 @@
             this.Command_ComboBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Command_ComboBox_KeyDown);
             this.Command_ComboBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Command_ComboBox_KeyUp);
             // 
+            // ProcessControl_Button
+            // 
+            this.ProcessControl_Button.BackColor = System.Drawing.Color.Chartreuse;
+            this.ProcessControl_Button.Location = new System.Drawing.Point(713, 12);
+            this.ProcessControl_Button.Name = "ProcessControl_Button";
+            this.ProcessControl_Button.Size = new System.Drawing.Size(75, 23);
+            this.ProcessControl_Button.TabIndex = 4;
+            this.ProcessControl_Button.Text = "Run";
+            this.ProcessControl_Button.UseVisualStyleBackColor = false;
+            this.ProcessControl_Button.Click += new System.EventHandler(this.ProcessControl_Button_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.ProcessControl_Button);
             this.Controls.Add(this.Command_ComboBox);
             this.Controls.Add(this.ExePath_TextBox);
-            this.Controls.Add(this.Kill_Button);
-            this.Controls.Add(this.Run_Button);
             this.Controls.Add(this.Output_RichTextBox);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -109,9 +95,8 @@
         #endregion
 
         private RichTextBox Output_RichTextBox;
-        private Button Run_Button;
         private TextBox ExePath_TextBox;
-        private Button Kill_Button;
         private ComboBox Command_ComboBox;
+        private Button ProcessControl_Button;
     }
 }
