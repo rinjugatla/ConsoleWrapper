@@ -35,6 +35,11 @@ namespace ConsoleWrapper.Model
 
         [JsonProperty("subcommands", NullValueHandling = NullValueHandling.Ignore)]
         public List<Subcommand> Subcommands { get; set; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 
     public partial class BasicCommandCommand
@@ -68,6 +73,11 @@ namespace ConsoleWrapper.Model
 
         [JsonProperty("commands")]
         public List<MacroCommandCommand> Commands { get; set; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 
     public partial class MacroCommandCommand
