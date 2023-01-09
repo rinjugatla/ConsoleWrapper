@@ -10,10 +10,10 @@ namespace ConsoleWrapper
     {
         const string COMMAND_SETTING_FILEPATH = "./command_setting.json";
 
-        Process? process = null;
-        CommandHistoryContoller HistoryContoller = new CommandHistoryContoller();
-        bool IsRunning => process != null && !process.HasExited;
-        Dictionary<string, Setting> Settings = new Dictionary<string, Setting>();
+        Process? _Process = null;
+        CommandHistoryContoller _HistoryContoller = new CommandHistoryContoller();
+        bool IsRunning => _Process != null && !_Process.HasExited;
+        Dictionary<string, Setting> _CommandSettings = new Dictionary<string, Setting>();
 
         public Form1()
         {
@@ -36,7 +36,7 @@ namespace ConsoleWrapper
                     var settings = Setting.FromJson(json);
                     foreach (var setting in settings)
                     {
-                        Settings[setting.App.Name] = setting;
+                        _CommandSettings[setting.App.Name] = setting;
                     }
                 }
             }
@@ -68,10 +68,10 @@ namespace ConsoleWrapper
         {
             ResetCommandSetting();
 
-            string name = process.ProcessName;
-            if (!Settings.ContainsKey(name)) { return; }
+            string name = _Process.ProcessName;
+            if (!_CommandSettings.ContainsKey(name)) { return; }
 
-            var setting = Settings[name];
+            var setting = _CommandSettings[name];
             foreach (var command in setting.BasicCommands)
             {
                 Command_ComboBox.Items.Add(command);
@@ -100,12 +100,12 @@ namespace ConsoleWrapper
 
         private void Command_ComboBox_KeyUp(object sender, KeyEventArgs e)
         {
-            if (process == null) { return; }
+            if (_Process == null) { return; }
             if (e.KeyCode != Keys.Enter) { return; }
 
             string command = Command_ComboBox.Text;
-            HistoryContoller.Add(command);
-            process.StandardInput.WriteLine(command);
+            _HistoryContoller.Add(command);
+            _Process.StandardInput.WriteLine(command);
         }
 
         private void Command_ComboBox_KeyDown(object sender, KeyEventArgs e)
@@ -115,7 +115,7 @@ namespace ConsoleWrapper
             // 入力をキャンセル
             e.Handled = true;
 
-            string? command = e.KeyCode == Keys.PageUp ? HistoryContoller.PrevCommand() : HistoryContoller.NextCommand();
+            string? command = e.KeyCode == Keys.PageUp ? _HistoryContoller.PrevCommand() : _HistoryContoller.NextCommand();
             if (command == null) { return; }
             Command_ComboBox.Text = command;
         }
@@ -146,10 +146,10 @@ namespace ConsoleWrapper
 
         private void StartProcess()
         {
-            process = new Process();
+            _Process = new Process();
 
             string path = ExePath_TextBox.Text;
-            process.StartInfo = new ProcessStartInfo(path)
+            _Process.StartInfo = new ProcessStartInfo(path)
             {
                 CreateNoWindow = true,
                 UseShellExecute = false,
@@ -159,7 +159,7 @@ namespace ConsoleWrapper
                 RedirectStandardError = true,
             };
 
-            process.OutputDataReceived += (sender, e) =>
+            _Process.OutputDataReceived += (sender, e) =>
             {
                 Output_RichTextBox.Invoke((MethodInvoker)delegate
                 {
@@ -173,7 +173,7 @@ namespace ConsoleWrapper
                     else { Output_RichTextBox.AppendText($"{e.Data}\n"); }
                 });
             };
-            process.ErrorDataReceived += (sender, e) =>
+            _Process.ErrorDataReceived += (sender, e) =>
             {
                 Output_RichTextBox.Invoke((MethodInvoker)delegate
                 {
@@ -188,11 +188,11 @@ namespace ConsoleWrapper
                 });
             };
 
-            process.Start();
+            _Process.Start();
 
             // 標準出力の読み込み開始
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
+            _Process.BeginOutputReadLine();
+            _Process.BeginErrorReadLine();
 
             UpdateControllEnable();
             UpdateProcessControll_Button();
@@ -203,15 +203,15 @@ namespace ConsoleWrapper
             UpdateControllEnable();
             UpdateProcessControll_Button();
 
-            if (process == null) { return; }
+            if (_Process == null) { return; }
 
-            if (!process.HasExited)
+            if (!_Process.HasExited)
             {
-                process.CancelOutputRead();
-                process.CancelErrorRead();
-                process.Kill();
-                process.WaitForExit();
-                process = null;
+                _Process.CancelOutputRead();
+                _Process.CancelErrorRead();
+                _Process.Kill();
+                _Process.WaitForExit();
+                _Process = null;
             }
 
             UpdateControllEnable();
