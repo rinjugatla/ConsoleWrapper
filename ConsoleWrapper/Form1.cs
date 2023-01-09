@@ -1,18 +1,50 @@
 ﻿using ConsoleWrapper.Controller;
+using ConsoleWrapper.Model;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Text;
 
 namespace ConsoleWrapper
 {
     public partial class Form1 : Form
     {
+        const string COMMAND_SETTING_FILEPATH = "./command_setting.json";
+
         Process? process = null;
         CommandHistoryContoller HistoryContoller = new CommandHistoryContoller();
         bool IsRunning => process != null && !process.HasExited;
+        Dictionary<string, Setting> Settings = new Dictionary<string, Setting>();
 
         public Form1()
         {
             InitializeComponent();
+        }
+
+        private void Form1_Shown(object sender, EventArgs e)
+        {
+            LoadSetting();
+        }
+
+        private void LoadSetting()
+        {
+            var a = Path.GetFullPath(COMMAND_SETTING_FILEPATH);
+            if (File.Exists(COMMAND_SETTING_FILEPATH))
+            {
+                using(var sr = new StreamReader(COMMAND_SETTING_FILEPATH, Encoding.UTF8))
+                {
+                    string json = sr.ReadToEnd();
+                    var settings = Setting.FromJson(json);
+                    foreach (var setting in settings)
+                    {
+                        Settings[setting.App.Name] = setting;
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("マクロ定義ファイルが存在しません", "設定ファイルの読み込み", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         private void ProcessControl_Button_Click(object sender, EventArgs e)
