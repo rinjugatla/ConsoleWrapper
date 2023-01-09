@@ -52,6 +52,7 @@
             // 
             // Command_ComboBox
             // 
+            this.Command_ComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.Command_ComboBox.Enabled = false;
             this.Command_ComboBox.FormattingEnabled = true;
             this.Command_ComboBox.Items.AddRange(new object[] {
@@ -61,8 +62,10 @@
             "d"});
             this.Command_ComboBox.Location = new System.Drawing.Point(12, 415);
             this.Command_ComboBox.Name = "Command_ComboBox";
-            this.Command_ComboBox.Size = new System.Drawing.Size(776, 23);
+            this.Command_ComboBox.Size = new System.Drawing.Size(776, 24);
             this.Command_ComboBox.TabIndex = 3;
+            this.Command_ComboBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.Command_ComboBox_DrawItem);
+            this.Command_ComboBox.SelectedIndexChanged += new System.EventHandler(this.Command_ComboBox_SelectedIndexChanged);
             this.Command_ComboBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Command_ComboBox_KeyDown);
             this.Command_ComboBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Command_ComboBox_KeyUp);
             // 

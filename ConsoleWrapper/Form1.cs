@@ -3,6 +3,7 @@ using ConsoleWrapper.Model;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ConsoleWrapper
 {
@@ -96,6 +97,54 @@ namespace ConsoleWrapper
             KillProcess();
 
             base.OnClosing(e);
+        }
+
+        /// <summary>
+        /// コマンドコンボボックスのアイテムを描画
+        /// </summary>
+        private void Command_ComboBox_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            e.DrawBackground();
+            Command_ComboBox_DrawItem_DrawText(sender, e);
+            e.DrawFocusRectangle();
+        }
+
+        /// <summary>
+        /// コマンドコンボボックスのアイテムテキストを描画
+        /// </summary>
+        private void Command_ComboBox_DrawItem_DrawText(object sender, DrawItemEventArgs e)
+        {
+            var combo = (ComboBox)sender;
+            bool isFirst = e.Index == -1;
+
+            string text = isFirst ? combo.Text : combo.Items[e.Index].ToString();
+
+            bool isBasicCommand = !isFirst && combo.Items[e.Index].GetType() == typeof(BasicCommand);
+            Color fontColor = isFirst ? Color.Black : isBasicCommand ? Color.Blue : Color.Orange;
+
+            using (var font = new Font(text, combo.Font.Size))
+            using (var brush = new SolidBrush(fontColor))
+            {
+                float ym = (e.Bounds.Height - e.Graphics.MeasureString(text, font).Height) / 2;
+                e.Graphics.DrawString(text, font, brush, e.Bounds.X, e.Bounds.Y + ym);
+            }
+        }
+
+        /// <summary>
+        /// コマンドコンボボックスの選択済みアイテムでテキストの色を変更
+        /// </summary>
+        private void Command_ComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var combo = (ComboBox)sender;
+            bool isSelectItem = combo.SelectedIndex > -1;
+            if (!isSelectItem)
+            {
+                combo.ForeColor = Color.Black;
+                return;
+            }
+
+            bool isBasicCommand = combo.Items[combo.SelectedIndex].GetType() == typeof(BasicCommand);
+            combo.ForeColor = isBasicCommand ? Color.Blue : Color.Orange;
         }
 
         private void Command_ComboBox_KeyUp(object sender, KeyEventArgs e)
