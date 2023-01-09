@@ -12,9 +12,19 @@ namespace ConsoleWrapper
         const string COMMAND_SETTING_FILEPATH = "./command_setting.json";
 
         Process? _Process = null;
+        /// <summary>
+        /// コマンド実行履歴
+        /// </summary>
         CommandHistoryContoller _HistoryContoller = new CommandHistoryContoller();
-        bool IsRunning => _Process != null && !_Process.HasExited;
+        /// <summary>
+        /// コマンド設定
+        /// </summary>
+        /// <remarks>Key: </remarks>
         Dictionary<string, Setting> _CommandSettings = new Dictionary<string, Setting>();
+        /// <summary>
+        /// プロセスが実行中か
+        /// </summary>
+        bool IsRunning => _Process != null && !_Process.HasExited;
 
         public Form1()
         {
