@@ -180,24 +180,15 @@ namespace ConsoleWrapper
         }
 
         /// <summary>
-        /// コントロールの有効化状態を更新
+        /// プロセスの実行状況に応じてコントロールの状態を更新
         /// </summary>
         /// <param name="forceEnabled">強制的に切り替える場合に使用(true: running)</param>
-        private void UpdateControllEnable(bool? forceEnabled = null)
-        {
-            bool enabled = forceEnabled ?? IsRunning;
-
-            ExePath_TextBox.Enabled = !enabled;
-            Command_ComboBox.Enabled = enabled;
-        }
-
-        /// <summary>
-        /// プロセス制御ボタンを切替
-        /// </summary>
-        /// <param name="forceEnabled">強制的に切り替える場合に使用(true: running)</param>
-        private void UpdateProcessControll_Button(bool? forceEnabled = null)
+        private void UpdateControll(bool? forceEnabled = null)
         {
             bool isRunning = forceEnabled ?? IsRunning;
+
+            ExePath_TextBox.Enabled = !isRunning;
+            Command_ComboBox.Enabled = isRunning;
 
             ProcessControl_Button.Text = isRunning ? "Kill" : "Run";
             ProcessControl_Button.BackColor = isRunning ? Color.Salmon : Color.Chartreuse;
@@ -226,8 +217,7 @@ namespace ConsoleWrapper
                     Output_RichTextBox.SelectionColor = Color.Black;
                     if (e.Data == null)
                     {
-                        UpdateControllEnable(false);
-                        UpdateProcessControll_Button(false);
+                        UpdateControll(false);
                     }
                     else { Output_RichTextBox.AppendText($"{e.Data}\n"); }
                 });
@@ -240,8 +230,7 @@ namespace ConsoleWrapper
                     Output_RichTextBox.SelectionColor = Color.Red;
                     if (e.Data == null)
                     {
-                        UpdateControllEnable(false);
-                        UpdateProcessControll_Button(false);
+                        UpdateControll(false);
                     }
                     else { Output_RichTextBox.AppendText($"{e.Data}\n"); }
                 });
@@ -253,14 +242,12 @@ namespace ConsoleWrapper
             _Process.BeginOutputReadLine();
             _Process.BeginErrorReadLine();
 
-            UpdateControllEnable();
-            UpdateProcessControll_Button();
+            UpdateControll();
         }
 
         private void KillProcess()
         {
-            UpdateControllEnable();
-            UpdateProcessControll_Button();
+            UpdateControll();
 
             if (_Process == null) { return; }
 
@@ -273,8 +260,7 @@ namespace ConsoleWrapper
                 _Process = null;
             }
 
-            UpdateControllEnable();
-            UpdateProcessControll_Button();
+            UpdateControll();
         }
     }
 }
