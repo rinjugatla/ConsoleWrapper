@@ -52,11 +52,43 @@ namespace ConsoleWrapper
             if (IsRunning)
             {
                 KillProcess();
+                ResetCommandSetting();
             }
             else
             {
                 StartProcess();
+                LoadCommandSetting();
             }
+        }
+
+        /// <summary>
+        /// コマンドコンボボックスにコマンドを設定
+        /// </summary>
+        private void LoadCommandSetting()
+        {
+            ResetCommandSetting();
+
+            string name = process.ProcessName;
+            if (!Settings.ContainsKey(name)) { return; }
+
+            var setting = Settings[name];
+            foreach (var command in setting.BasicCommands)
+            {
+                Command_ComboBox.Items.Add(command);
+            }
+
+            foreach (var command in setting.MacroCommands)
+            {
+                Command_ComboBox.Items.Add(command);
+            }
+        }
+
+        /// <summary>
+        /// コマンドコンボボックスを初期化
+        /// </summary>
+        private void ResetCommandSetting()
+        {
+            Command_ComboBox.Items.Clear();
         }
 
         protected override void OnClosing(CancelEventArgs e)
