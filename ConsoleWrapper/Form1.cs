@@ -36,6 +36,9 @@ namespace ConsoleWrapper
             LoadSetting();
         }
 
+        /// <summary>
+        /// 設定ファイル読み込み
+        /// </summary>
         private void LoadSetting()
         {
             var a = Path.GetFullPath(COMMAND_SETTING_FILEPATH);
@@ -58,6 +61,9 @@ namespace ConsoleWrapper
             }
         }
 
+        /// <summary>
+        /// プロセス制御
+        /// </summary>
         private void ProcessControl_Button_Click(object sender, EventArgs e)
         {
             if (IsRunning)
@@ -157,6 +163,9 @@ namespace ConsoleWrapper
             combo.ForeColor = isBasicCommand ? Color.Blue : Color.Orange;
         }
 
+        /// <summary>
+        /// コマンド実行履歴の更新
+        /// </summary>
         private void Command_ComboBox_KeyUp(object sender, KeyEventArgs e)
         {
             if (_Process == null) { return; }
@@ -167,6 +176,9 @@ namespace ConsoleWrapper
             _Process.StandardInput.WriteLine(command);
         }
 
+        /// <summary>
+        /// 実行履歴呼び出し
+        /// </summary>
         private void Command_ComboBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (!(e.KeyCode == Keys.PageUp || e.KeyCode == Keys.PageDown)) { return; }
