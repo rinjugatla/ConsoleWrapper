@@ -30,11 +30,11 @@ namespace ConsoleWrapper.Model
         [JsonProperty("description")]
         public string Description { get; set; }
 
-        [JsonProperty("commands")]
-        public List<BasicCommandCommand> Commands { get; set; }
+        [JsonProperty("command")]
+        public Command Command { get; set; }
 
-        [JsonProperty("subcommands", NullValueHandling = NullValueHandling.Ignore)]
-        public List<Subcommand> Subcommands { get; set; }
+        [JsonProperty("command_patterns", NullValueHandling = NullValueHandling.Ignore)]
+        public List<CommandPattern> CommandPatterns { get; set; }
 
         public override string ToString()
         {
@@ -42,19 +42,7 @@ namespace ConsoleWrapper.Model
         }
     }
 
-    public partial class BasicCommandCommand
-    {
-        [JsonProperty("type")]
-        public string Type { get; set; }
-
-        [JsonProperty("command")]
-        public string Command { get; set; }
-
-        [JsonProperty("pattern")]
-        public string Pattern { get; set; }
-    }
-
-    public partial class Subcommand
+    public partial class CommandPattern
     {
         [JsonProperty("name")]
         public string Name { get; set; }
@@ -72,7 +60,7 @@ namespace ConsoleWrapper.Model
         public string Description { get; set; }
 
         [JsonProperty("commands")]
-        public List<MacroCommandCommand> Commands { get; set; }
+        public List<Command> Commands { get; set; }
 
         public override string ToString()
         {
@@ -80,13 +68,16 @@ namespace ConsoleWrapper.Model
         }
     }
 
-    public partial class MacroCommandCommand
+    public partial class Command
     {
         [JsonProperty("type")]
         public string Type { get; set; }
 
-        [JsonProperty("command")]
-        public string Command { get; set; }
+        [JsonProperty("query")]
+        public string Query { get; set; }
+
+        [JsonProperty("pattern")]
+        public string Pattern { get; set; }
     }
 
     public partial class Setting
