@@ -108,7 +108,7 @@ namespace ConsoleWrapper.Controller
                 case SystemCommandType.Wait:
                     await SystemCommand_Wait(command.Query); break;
                 case SystemCommandType.Kill:
-                    break;
+                    SystemCommand_Kill();  break;
                 default:
                     break;
             }
@@ -167,7 +167,7 @@ namespace ConsoleWrapper.Controller
         /// <param name="command"></param>
         private void SystemCommand_Kill()
         {
-
+            _Process.Kill();
         }
     }
 }
