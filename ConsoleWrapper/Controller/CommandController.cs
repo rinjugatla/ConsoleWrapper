@@ -37,11 +37,10 @@ namespace ConsoleWrapper.Controller
         /// <summary>
         /// 基本コマンドを実行
         /// </summary>
-        /// <param name="process">プロセス</param>
         /// <param name="basic">コマンド</param>
-        public async Task Execute(Process process, BasicCommand basic)
+        public async Task Execute(BasicCommand basic)
         {
-            if (process == null || basic == null) { return; }
+            if (_Process == null || basic == null) { return; }
 
             var command = basic.Command;
             var type = AnalyzeCommandType(command.Type);
@@ -59,11 +58,10 @@ namespace ConsoleWrapper.Controller
         /// <summary>
         /// マクロコマンドを実行
         /// </summary>
-        /// <param name="process">プロセス</param>
         /// <param name="macro">マクロ</param>
-        public async Task Execute(Process process, MacroCommand macro)
+        public async Task Execute(MacroCommand macro)
         {
-            if (process == null || macro == null) { return; }
+            if (_Process == null || macro == null) { return; }
 
             foreach (var command in macro.Commands)
             {
@@ -172,7 +170,13 @@ namespace ConsoleWrapper.Controller
         /// <param name="command"></param>
         private void SystemCommand_Kill()
         {
-            _Process.Kill();
+            if (!_Process.HasExited)
+            {
+                _Process.CancelOutputRead();
+                _Process.CancelErrorRead();
+                _Process.Kill();
+                _Process.WaitForExit();
+            }
         }
     }
 }

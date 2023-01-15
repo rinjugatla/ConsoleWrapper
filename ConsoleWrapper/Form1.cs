@@ -166,14 +166,25 @@ namespace ConsoleWrapper
         /// <summary>
         /// コマンド実行履歴の更新
         /// </summary>
-        private void Command_ComboBox_KeyUp(object sender, KeyEventArgs e)
+        private async void Command_ComboBox_KeyUp(object sender, KeyEventArgs e)
         {
             if (_Process == null) { return; }
             if (e.KeyCode != Keys.Enter) { return; }
 
-            string command = Command_ComboBox.Text;
-            _HistoryContoller.Add(command);
-            _Process.StandardInput.WriteLine(command);
+            var command = Command_ComboBox.SelectedItem;
+            bool isUserCommand = command == null;
+            if (isUserCommand)
+            {
+                string query = Command_ComboBox.Text;
+                _HistoryContoller.Add(query);
+                _Process.StandardInput.WriteLine(query);
+            }
+            else
+            {
+                var controller = new CommandController(_Process);
+                if (command is BasicCommand) { await controller.Execute(command as BasicCommand); }
+                else { await controller.Execute(command as MacroCommand); }
+            }
         }
 
         /// <summary>
