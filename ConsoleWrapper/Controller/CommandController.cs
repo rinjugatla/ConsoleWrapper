@@ -34,6 +34,11 @@ namespace ConsoleWrapper.Controller
             _Process = process;
         }
 
+        /// <summary>
+        /// 基本コマンドを実行
+        /// </summary>
+        /// <param name="process">プロセス</param>
+        /// <param name="basic">コマンド</param>
         public async Task Execute(Process process, BasicCommand basic)
         {
             if (process == null || basic == null) { return; }
@@ -51,6 +56,11 @@ namespace ConsoleWrapper.Controller
             }
         }
 
+        /// <summary>
+        /// マクロコマンドを実行
+        /// </summary>
+        /// <param name="process">プロセス</param>
+        /// <param name="macro">マクロ</param>
         public async Task Execute(Process process, MacroCommand macro)
         {
             if (process == null || macro == null) { return; }
@@ -73,7 +83,6 @@ namespace ConsoleWrapper.Controller
         /// <summary>
         /// コマンドタイプを解析
         /// </summary>
-        /// <param name="type">設定ファイルに定義されたコマンドタイプ</param>
         private CommandType AnalyzeCommandType(string type)
         {
             switch (type.ToLower())
@@ -90,7 +99,6 @@ namespace ConsoleWrapper.Controller
         /// <summary>
         /// プロセスに標準入力
         /// </summary>
-        /// <param name="command">コマンド</param>
         private void ExecuteConsoleCommand(Command command)
         {
             _Process.StandardInput.WriteLine(command.Query);
@@ -99,7 +107,6 @@ namespace ConsoleWrapper.Controller
         /// <summary>
         /// システムコマンドを実行
         /// </summary>
-        /// <param name="command"></param>
         private async Task ExecuteSystemCommand(Command command)
         {
             var type = AnalyzeSystemCommandType(command.Query);
@@ -115,10 +122,8 @@ namespace ConsoleWrapper.Controller
         }
 
         /// <summary>
-        /// システムコマンドタイプを
+        /// システムコマンドタイプを解析
         /// </summary>
-        /// <param name="command"></param>
-        /// <returns></returns>
         private SystemCommandType AnalyzeSystemCommandType(string command)
         {
             var firstCommand = command.Split(" ");
