@@ -32,13 +32,14 @@
             this.ExePath_TextBox = new System.Windows.Forms.TextBox();
             this.Command_ComboBox = new System.Windows.Forms.ComboBox();
             this.ProcessControl_Button = new System.Windows.Forms.Button();
+            this.CommandHistory_ListBox = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // Output_RichTextBox
             // 
             this.Output_RichTextBox.Location = new System.Drawing.Point(12, 41);
             this.Output_RichTextBox.Name = "Output_RichTextBox";
-            this.Output_RichTextBox.Size = new System.Drawing.Size(776, 367);
+            this.Output_RichTextBox.Size = new System.Drawing.Size(623, 367);
             this.Output_RichTextBox.TabIndex = 0;
             this.Output_RichTextBox.Text = "";
             // 
@@ -80,11 +81,23 @@
             this.ProcessControl_Button.UseVisualStyleBackColor = false;
             this.ProcessControl_Button.Click += new System.EventHandler(this.ProcessControl_Button_Click);
             // 
+            // CommandHistory_ListBox
+            // 
+            this.CommandHistory_ListBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+            this.CommandHistory_ListBox.FormattingEnabled = true;
+            this.CommandHistory_ListBox.Location = new System.Drawing.Point(641, 42);
+            this.CommandHistory_ListBox.Name = "CommandHistory_ListBox";
+            this.CommandHistory_ListBox.Size = new System.Drawing.Size(147, 364);
+            this.CommandHistory_ListBox.TabIndex = 5;
+            this.CommandHistory_ListBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.CommandHistory_ListBox_DrawItem);
+            this.CommandHistory_ListBox.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.CommandHistory_ListBox_MeasureItem);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.CommandHistory_ListBox);
             this.Controls.Add(this.ProcessControl_Button);
             this.Controls.Add(this.Command_ComboBox);
             this.Controls.Add(this.ExePath_TextBox);
@@ -103,5 +116,6 @@
         private TextBox ExePath_TextBox;
         private ComboBox Command_ComboBox;
         private Button ProcessControl_Button;
+        private ListBox CommandHistory_ListBox;
     }
 }

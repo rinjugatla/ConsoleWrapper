@@ -3,7 +3,6 @@ using ConsoleWrapper.Model;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ConsoleWrapper
 {
@@ -178,12 +177,14 @@ namespace ConsoleWrapper
                 string query = Command_ComboBox.Text;
                 _HistoryContoller.Add(query);
                 _Process.StandardInput.WriteLine(query);
+                CommandHistory_ListBox.Items.Add(query);
             }
             else
             {
                 var controller = new CommandController(_Process);
                 if (command is BasicCommand) { await controller.Execute(command as BasicCommand); }
                 else { await controller.Execute(command as MacroCommand); }
+                CommandHistory_ListBox.Items.Add(command);
             }
         }
 
@@ -284,6 +285,38 @@ namespace ConsoleWrapper
             }
 
             UpdateControll();
+        }
+
+        /// <summary>
+        /// アイテムの高さ計算
+        /// </summary>
+        private void CommandHistory_ListBox_MeasureItem(object sender, MeasureItemEventArgs e)
+        {
+            var listBox = (ListBox)sender;
+            string? text = e.Index > -1 ? listBox.Items[e.Index].ToString() : null;
+
+            e.Graphics.PageUnit = GraphicsUnit.Pixel;
+            // ListBoxの幅で固定して高さを計測
+            var size = e.Graphics.MeasureString(text, listBox.Font, listBox.ClientSize.Width);
+            e.ItemWidth = Convert.ToInt32(size.Width);
+            e.ItemHeight = Convert.ToInt32(size.Height);
+        }
+
+        /// <summary>
+        /// アイテムまたは領域の描画
+        /// </summary>
+        private void CommandHistory_ListBox_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            var listBox = (ListBox)sender;
+            var isSelected = (e.State & DrawItemState.Selected) != 0;
+            string? text = e.Index > -1 ? listBox.Items[e.Index].ToString() : null;
+            bool isUserCommand = e.Index == -1 || (e.Index > -1 && listBox.Items[e.Index] is string);
+            bool isBasicCommand = e.Index > -1 && listBox.Items[e.Index] is BasicCommand;
+            var textColor = isUserCommand ? Brushes.Black : isBasicCommand ? Brushes.Blue : Brushes.Orange;
+
+            e.Graphics.FillRectangle(isSelected ? Brushes.AliceBlue : Brushes.White, e.Bounds);
+            //if (isSelected) { e.Graphics.DrawRectangle(Pens.Pink, e.Bounds); }
+            e.Graphics.DrawString(text, listBox.Font, textColor, e.Bounds);
         }
     }
 }
