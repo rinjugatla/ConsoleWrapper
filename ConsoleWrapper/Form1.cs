@@ -112,11 +112,22 @@ namespace ConsoleWrapper
             Command_ComboBox.Items.Clear();
         }
 
-        protected override void OnClosing(CancelEventArgs e)
+        /// <summary>
+        /// フォームを閉じる直前
+        /// </summary>
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            KillProcess();
+            if (!IsRunning) { return; }
 
-            base.OnClosing(e);
+            var result = MessageBox.Show("プロセスが実行中です。閉じますか？", "ConsoleWrapper", 
+                MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            if (result == DialogResult.No)
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            KillProcess();
         }
 
         /// <summary>
