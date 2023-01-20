@@ -48,6 +48,8 @@ namespace ConsoleWrapper
                 {
                     string json = sr.ReadToEnd();
                     var settings = Setting.FromJson(json);
+                    if(settings == null) { return; }
+
                     foreach (var setting in settings)
                     {
                         _CommandSettings[setting.App.Name] = setting;
@@ -85,7 +87,8 @@ namespace ConsoleWrapper
         {
             ResetCommandSetting();
 
-            string name = _Process.ProcessName;
+            string? name = _Process?.ProcessName;
+            if(name == null) { return; }
             if (!_CommandSettings.ContainsKey(name)) { return; }
 
             var setting = _CommandSettings[name];
@@ -144,7 +147,8 @@ namespace ConsoleWrapper
             var combo = (ComboBox)sender;
             bool isFirst = e.Index == -1;
 
-            string text = isFirst ? combo.Text : combo.Items[e.Index].ToString();
+            string? text = isFirst ? combo.Text : combo.Items[e.Index].ToString();
+            if (text == null) { text = ""; }
 
             bool isBasicCommand = !isFirst && combo.Items[e.Index].GetType() == typeof(BasicCommand);
             Color fontColor = isFirst ? Color.Black : isBasicCommand ? Color.Blue : Color.Orange;
@@ -199,8 +203,7 @@ namespace ConsoleWrapper
             }
             else
             {
-                if (command is BasicCommand) { await _CommandController.Execute(command as BasicCommand); }
-                else { await _CommandController.Execute(command as MacroCommand); }
+                
             }
         }
 

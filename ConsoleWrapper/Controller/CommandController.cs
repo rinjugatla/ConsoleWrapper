@@ -16,8 +16,8 @@ namespace ConsoleWrapper.Controller
         /// <summary>
         /// コマンド実行時のイベント BasicCommand, MacroCommand
         /// </summary>
-        public event Action<object> OnCommandExecuted;
-        private Process _Process;
+        public event Action<object>? OnCommandExecuted;
+        private Process? _Process;
 
         private enum CommandType
         {
@@ -38,6 +38,15 @@ namespace ConsoleWrapper.Controller
             _Process = process;
         }
 
+        public async Task Execute(object command)
+        {
+            if(command == null) { return; }
+            if (!(command is BasicCommand || command is MacroCommand)) { return; }
+
+            if (command is BasicCommand) { await Execute((BasicCommand)command); }
+            else { await Execute((MacroCommand)command); }
+        }
+
         /// <summary>
         /// 基本コマンドを実行
         /// </summary>
@@ -46,11 +55,11 @@ namespace ConsoleWrapper.Controller
         {
             if (_Process == null || basic == null) { return; }
 
-            OnCommandExecuted.Invoke(basic);
+            OnCommandExecuted?.Invoke(basic);
             
             var command = basic.Command;
             var type = AnalyzeCommandType(command.Type);
-            OnCommandExecuted.Invoke(command);
+            OnCommandExecuted?.Invoke(command);
             switch (type)
             {
                 case CommandType.Console:
@@ -70,12 +79,12 @@ namespace ConsoleWrapper.Controller
         {
             if (_Process == null || macro == null) { return; }
 
-            OnCommandExecuted.Invoke(macro);
+            OnCommandExecuted?.Invoke(macro);
 
             foreach (var command in macro.Commands)
             {
                 var type = AnalyzeCommandType(command.Type);
-                OnCommandExecuted.Invoke(command);
+                OnCommandExecuted?.Invoke(command);
                 switch (type)
                 {
                     case CommandType.Console:
@@ -109,7 +118,7 @@ namespace ConsoleWrapper.Controller
         /// </summary>
         private void ExecuteConsoleCommand(Command command)
         {
-            _Process.StandardInput.WriteLine(command.Query);
+            _Process?.StandardInput.WriteLine(command.Query);
         }
 
         /// <summary>
@@ -180,6 +189,8 @@ namespace ConsoleWrapper.Controller
         /// <param name="command"></param>
         private void SystemCommand_Kill()
         {
+            if(_Process == null) { return; }
+
             if (!_Process.HasExited)
             {
                 _Process.CancelOutputRead();

@@ -7,34 +7,34 @@ namespace ConsoleWrapper.Model
     public partial class Setting
     {
         [JsonProperty("app")]
-        public App App { get; set; }
+        public App App { get; set; } = new App();
 
         [JsonProperty("basic_commands")]
-        public List<BasicCommand> BasicCommands { get; set; }
+        public List<BasicCommand> BasicCommands { get; set; } = new List<BasicCommand>();
 
         [JsonProperty("macro_commands")]
-        public List<MacroCommand> MacroCommands { get; set; }
+        public List<MacroCommand> MacroCommands { get; set; } = new List<MacroCommand>();
     }
 
     public partial class App
     {
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
     }
 
     public partial class BasicCommand
     {
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
 
         [JsonProperty("description")]
-        public string Description { get; set; }
+        public string Description { get; set; } = "";
 
         [JsonProperty("command")]
-        public Command Command { get; set; }
+        public Command Command { get; set; } = new Command();
 
         [JsonProperty("command_patterns", NullValueHandling = NullValueHandling.Ignore)]
-        public List<CommandPattern> CommandPatterns { get; set; }
+        public List<CommandPattern> CommandPatterns { get; set; } = new List<CommandPattern>();
 
         public override string ToString()
         {
@@ -45,22 +45,22 @@ namespace ConsoleWrapper.Model
     public partial class CommandPattern
     {
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
 
         [JsonProperty("pattern", NullValueHandling = NullValueHandling.Ignore)]
-        public string Pattern { get; set; }
+        public string Pattern { get; set; } = "";
     }
 
     public partial class MacroCommand
     {
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
 
         [JsonProperty("description")]
-        public string Description { get; set; }
+        public string Description { get; set; } = "";
 
         [JsonProperty("commands")]
-        public List<Command> Commands { get; set; }
+        public List<Command> Commands { get; set; } = new List<Command>();
 
         public override string ToString()
         {
@@ -71,13 +71,13 @@ namespace ConsoleWrapper.Model
     public partial class Command
     {
         [JsonProperty("type")]
-        public string Type { get; set; }
+        public string Type { get; set; } = "";
 
         [JsonProperty("query")]
-        public string Query { get; set; }
+        public string Query { get; set; } = "";
 
         [JsonProperty("pattern")]
-        public string Pattern { get; set; }
+        public string Pattern { get; set; } = "";
 
         public override string ToString()
         {
@@ -87,7 +87,7 @@ namespace ConsoleWrapper.Model
 
     public partial class Setting
     {
-        public static List<Setting> FromJson(string json) => JsonConvert.DeserializeObject<List<Setting>>(json, Converter.Settings);
+        public static List<Setting>? FromJson(string json) => JsonConvert.DeserializeObject<List<Setting>>(json, Converter.Settings);
     }
 
     public static class Serialize
