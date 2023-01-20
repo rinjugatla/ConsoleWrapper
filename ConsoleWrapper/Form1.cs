@@ -11,11 +11,7 @@ namespace ConsoleWrapper
         const string COMMAND_SETTING_FILEPATH = "./command_setting.json";
 
         Process? _Process = null;
-        CommandController _CommandController = new CommandController(null);
-        /// <summary>
-        /// コマンド実行履歴
-        /// </summary>
-        CommandHistoryContoller _HistoryContoller = new CommandHistoryContoller();
+        CommandController _CommandController = new CommandController();
         /// <summary>
         /// コマンド設定
         /// </summary>
@@ -206,21 +202,6 @@ namespace ConsoleWrapper
                 if (command is BasicCommand) { await _CommandController.Execute(command as BasicCommand); }
                 else { await _CommandController.Execute(command as MacroCommand); }
             }
-        }
-
-        /// <summary>
-        /// 実行履歴呼び出し
-        /// </summary>
-        private void Command_ComboBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (!(e.KeyCode == Keys.PageUp || e.KeyCode == Keys.PageDown)) { return; }
-
-            // 入力をキャンセル
-            e.Handled = true;
-
-            string? command = e.KeyCode == Keys.PageUp ? _HistoryContoller.PrevCommand() : _HistoryContoller.NextCommand();
-            if (command == null) { return; }
-            Command_ComboBox.Text = command;
         }
 
         /// <summary>

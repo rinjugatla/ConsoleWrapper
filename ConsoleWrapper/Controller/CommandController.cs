@@ -33,11 +33,6 @@ namespace ConsoleWrapper.Controller
             Unknown
         }
 
-        public CommandController(Process process)
-        {
-            _Process = process;
-        }
-
         public void UpdateProcess(Process process)
         {
             _Process = process;
