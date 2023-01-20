@@ -78,6 +78,11 @@ namespace ConsoleWrapper.Model
 
         [JsonProperty("pattern")]
         public string Pattern { get; set; }
+
+        public override string ToString()
+        {
+            return $"Start... {Query}";
+        }
     }
 
     public partial class Setting

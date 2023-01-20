@@ -13,7 +13,11 @@ namespace ConsoleWrapper.Controller
     /// </summary>
     internal class CommandController
     {
-        Process _Process;
+        /// <summary>
+        /// コマンド実行時のイベント BasicCommand, MacroCommand
+        /// </summary>
+        public event Action<object> OnCommandExecuted;
+        private Process _Process;
 
         private enum CommandType
         {
@@ -34,6 +38,11 @@ namespace ConsoleWrapper.Controller
             _Process = process;
         }
 
+        public void UpdateProcess(Process process)
+        {
+            _Process = process;
+        }
+
         /// <summary>
         /// 基本コマンドを実行
         /// </summary>
@@ -42,8 +51,11 @@ namespace ConsoleWrapper.Controller
         {
             if (_Process == null || basic == null) { return; }
 
+            OnCommandExecuted.Invoke(basic);
+            
             var command = basic.Command;
             var type = AnalyzeCommandType(command.Type);
+            OnCommandExecuted.Invoke(command);
             switch (type)
             {
                 case CommandType.Console:
@@ -63,9 +75,12 @@ namespace ConsoleWrapper.Controller
         {
             if (_Process == null || macro == null) { return; }
 
+            OnCommandExecuted.Invoke(macro);
+
             foreach (var command in macro.Commands)
             {
                 var type = AnalyzeCommandType(command.Type);
+                OnCommandExecuted.Invoke(command);
                 switch (type)
                 {
                     case CommandType.Console:

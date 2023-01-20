@@ -11,6 +11,7 @@ namespace ConsoleWrapper
         const string COMMAND_SETTING_FILEPATH = "./command_setting.json";
 
         Process? _Process = null;
+        CommandController _CommandController = new CommandController(null);
         /// <summary>
         /// コマンド実行履歴
         /// </summary>
@@ -33,6 +34,10 @@ namespace ConsoleWrapper
         private void Form1_Shown(object sender, EventArgs e)
         {
             LoadSetting();
+            _CommandController.OnCommandExecuted += (command) =>
+            {
+                CommandHistory_ListBox.Items.Add(command);
+            };
         }
 
         /// <summary>
@@ -175,16 +180,20 @@ namespace ConsoleWrapper
             if (isUserCommand)
             {
                 string query = Command_ComboBox.Text;
-                _HistoryContoller.Add(query);
-                _Process.StandardInput.WriteLine(query);
-                CommandHistory_ListBox.Items.Add(query);
+                var basicCommand = new BasicCommand() {
+                    Name = query,
+                    Command = new Command() { 
+                        Type = "console",
+                        Query = query
+                    }
+                };
+
+                await _CommandController.Execute(basicCommand);
             }
             else
             {
-                var controller = new CommandController(_Process);
-                if (command is BasicCommand) { await controller.Execute(command as BasicCommand); }
-                else { await controller.Execute(command as MacroCommand); }
-                CommandHistory_ListBox.Items.Add(command);
+                if (command is BasicCommand) { await _CommandController.Execute(command as BasicCommand); }
+                else { await _CommandController.Execute(command as MacroCommand); }
             }
         }
 
@@ -261,6 +270,7 @@ namespace ConsoleWrapper
             };
 
             _Process.Start();
+            _CommandController.UpdateProcess(_Process);
 
             // 標準出力の読み込み開始
             _Process.BeginOutputReadLine();
