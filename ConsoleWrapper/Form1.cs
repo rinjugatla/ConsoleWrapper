@@ -320,7 +320,7 @@ namespace ConsoleWrapper
             var listBox = (ListBox)sender;
             var isSelected = (e.State & DrawItemState.Selected) != 0;
             string? text = e.Index > -1 ? listBox.Items[e.Index].ToString() : null;
-            bool isUserCommand = e.Index == -1 || (e.Index > -1 && listBox.Items[e.Index] is string);
+            bool isUserCommand = e.Index == -1 || (e.Index > -1 && listBox.Items[e.Index] is Command);
             bool isBasicCommand = e.Index > -1 && listBox.Items[e.Index] is BasicCommand;
             var textColor = isUserCommand ? Brushes.Black : isBasicCommand ? Brushes.Blue : Brushes.Orange;
 
