@@ -187,24 +187,21 @@ namespace ConsoleWrapper
             if (e.KeyCode != Keys.Enter) { return; }
 
             var command = Command_ComboBox.SelectedItem;
-            bool isUserCommand = command == null;
-            if (isUserCommand)
+            if(command != null)
             {
-                string query = Command_ComboBox.Text;
-                var basicCommand = new BasicCommand() {
-                    Name = query,
-                    Command = new Command() { 
-                        Type = "console",
-                        Query = query
-                    }
-                };
+                await _CommandController.Execute(command);
+                return;
+            }
 
-                await _CommandController.Execute(basicCommand);
-            }
-            else
-            {
-                
-            }
+            string query = Command_ComboBox.Text;
+            var basicCommand = new BasicCommand() {
+                Name = query,
+                Command = new Command() { 
+                    Type = "console",
+                    Query = query
+                }
+            };
+            await _CommandController.Execute(basicCommand);
         }
 
         /// <summary>
