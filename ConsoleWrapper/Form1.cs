@@ -240,10 +240,7 @@ namespace ConsoleWrapper
                 {
                     Output_RichTextBox.SelectionLength = 0;
                     Output_RichTextBox.SelectionColor = Color.Black;
-                    if (e.Data == null)
-                    {
-                        UpdateControll(false);
-                    }
+                    if (e.Data == null) { UpdateControll(false); }
                     else { Output_RichTextBox.AppendText($"{e.Data}\n"); }
                 });
             };
@@ -253,10 +250,7 @@ namespace ConsoleWrapper
                 {
                     Output_RichTextBox.SelectionLength = 0;
                     Output_RichTextBox.SelectionColor = Color.Red;
-                    if (e.Data == null)
-                    {
-                        UpdateControll(false);
-                    }
+                    if (e.Data == null) { UpdateControll(false); }
                     else { Output_RichTextBox.AppendText($"{e.Data}\n"); }
                 });
             };
