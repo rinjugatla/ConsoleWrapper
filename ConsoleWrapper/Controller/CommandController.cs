@@ -168,14 +168,24 @@ namespace ConsoleWrapper.Controller
             string unit = @params[2].ToLower();
             switch (unit)
             {
-                case "millsec":
+                case "millisecond":
+                case "millisec":
+                case "ms":
                     sleep = time; break;
+                case "second":
                 case "sec":
+                case "s":
                     sleep = time * 1000; break;
+                case "minuet":
                 case "min":
+                case "m":
                     sleep = time * 1000 * 60; break;
                 case "hour":
+                case "h":
                     sleep = time * 1000 * 60 * 60; break;
+                case "day":
+                case "d":
+                    sleep = time * 1000 * 60 * 60 * 24; break;
                 default:
                     break;
             }
