@@ -320,5 +320,60 @@ namespace ConsoleWrapper
             //if (isSelected) { e.Graphics.DrawRectangle(Pens.Pink, e.Bounds); }
             e.Graphics.DrawString(text, listBox.Font, textColor, e.Bounds);
         }
+
+        /// <summary>
+        /// コマンド履歴からコマンドを再実行
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void CommandHistory_ListBox_DoubleClick(object sender, EventArgs e)
+        {
+            if (!IsRunning) { return; }
+
+            var listBox = (ListBox)sender;
+            var item = listBox.SelectedItem;
+            bool notSelected = item == null;
+            if (notSelected) { return; }
+
+            var type = AnalyzeHistoryType(item);
+            switch (type)
+            {
+                case HistoryType.BasicCommand:
+                case HistoryType.MacroCommand:
+                    await _CommandController.Execute(item);
+                    break;
+                case HistoryType.Text:
+                case HistoryType.Unknown:
+                default:
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// コマンド履歴の型
+        /// </summary>
+        private enum HistoryType
+        {
+            Unknown,
+            BasicCommand,
+            MacroCommand,
+            Text
+        }
+
+        /// <summary>
+        /// 履歴の型を解析
+        /// </summary>
+        /// <param name="item">履歴</param>
+        /// <returns></returns>
+        private HistoryType AnalyzeHistoryType(object? item)
+        {
+            var result = HistoryType.Unknown;
+            if(item is BasicCommand) { result = HistoryType.BasicCommand; }
+            else if(item is MacroCommand) { result = HistoryType.MacroCommand; }
+            else if (item is string) { result = HistoryType.Text; }
+            else { result = HistoryType.Unknown; }
+
+            return result;
+        }
     }
 }

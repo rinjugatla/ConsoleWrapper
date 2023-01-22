@@ -38,7 +38,7 @@ namespace ConsoleWrapper.Controller
             _Process = process;
         }
 
-        public async Task Execute(object command)
+        public async Task Execute(object? command)
         {
             if(command == null) { return; }
             if (!(command is BasicCommand || command is MacroCommand)) { return; }

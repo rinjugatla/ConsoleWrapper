@@ -90,6 +90,7 @@
             this.CommandHistory_ListBox.TabIndex = 5;
             this.CommandHistory_ListBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.CommandHistory_ListBox_DrawItem);
             this.CommandHistory_ListBox.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.CommandHistory_ListBox_MeasureItem);
+            this.CommandHistory_ListBox.DoubleClick += new System.EventHandler(this.CommandHistory_ListBox_DoubleClick);
             // 
             // Form1
             // 
