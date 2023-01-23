@@ -18,6 +18,7 @@ namespace ConsoleWrapper.Controller
         /// </summary>
         public event Action<object>? OnCommandExecuted;
         private Process? _Process;
+        bool IsRunning => _Process != null && !_Process.HasExited;
 
         private enum CommandType
         {
@@ -53,7 +54,7 @@ namespace ConsoleWrapper.Controller
         /// <param name="basic">コマンド</param>
         public async Task Execute(BasicCommand basic)
         {
-            if (_Process == null || basic == null) { return; }
+            if (!IsRunning || basic == null) { return; }
 
             OnCommandExecuted?.Invoke(basic);
             
@@ -77,12 +78,15 @@ namespace ConsoleWrapper.Controller
         /// <param name="macro">マクロ</param>
         public async Task Execute(MacroCommand macro)
         {
-            if (_Process == null || macro == null) { return; }
+            if (!IsRunning || macro == null) { return; }
 
             OnCommandExecuted?.Invoke(macro);
 
             foreach (var command in macro.Commands)
             {
+                // コマンドで終了している可能性があるのでチェック
+                if (!IsRunning || command == null) { return; }
+
                 var type = AnalyzeCommandType(command.Type);
                 OnCommandExecuted?.Invoke(command);
                 switch (type)
