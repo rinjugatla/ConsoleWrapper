@@ -34,7 +34,7 @@ namespace ConsoleWrapper.Controller
             Unknown
         }
 
-        public void UpdateProcess(Process process)
+        public void UpdateProcess(Process? process)
         {
             _Process = process;
         }
@@ -212,6 +212,25 @@ namespace ConsoleWrapper.Controller
                 _Process.Kill();
                 _Process.WaitForExit();
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>-force, -fで実行中のプロセスをKillしてから実行</remarks>
+        /// <param name="query"></param>
+        private void SystemCommand_Start(string query)
+        {
+            var @params = query.Split(" ");
+            if (@params.Length < 2) { return; }
+
+            string path = @params[1];
+            if (!File.Exists(path)) { return; }
+
+            bool isForce = @params.Any(p => p.ToLower() == "-f" || p.ToLower() == "-force");
+            if (IsRunning && isForce) { SystemCommand_Kill(); }
+            else if (IsRunning) { return; }
+
         }
     }
 }

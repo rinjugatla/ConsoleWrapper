@@ -10,18 +10,20 @@ namespace ConsoleWrapper
     {
         const string COMMAND_SETTING_FILEPATH = "./command_setting.json";
 
-        Process? _Process = null;
+        /// <summary>
+        /// プロセス管理
+        /// </summary>
+        ProcessController _ProcessController;
+        /// <summary>
+        /// コマンド管理
+        /// </summary>
         CommandController _CommandController = new CommandController();
         /// <summary>
         /// コマンド設定
         /// </summary>
         /// <remarks>Key: </remarks>
         Dictionary<string, Setting> _CommandSettings = new Dictionary<string, Setting>();
-        /// <summary>
-        /// プロセスが実行中か
-        /// </summary>
-        bool IsRunning => _Process != null && !_Process.HasExited;
-
+        
         public Form1()
         {
             InitializeComponent();
@@ -30,6 +32,21 @@ namespace ConsoleWrapper
         private void Form1_Shown(object sender, EventArgs e)
         {
             LoadSetting();
+
+            _ProcessController = new ProcessController(Output_RichTextBox);
+            _ProcessController.OnProcessStart += () =>
+            {
+                LoadCommandSetting();
+                UpdateControll();
+                _CommandController.UpdateProcess(_ProcessController?.Process);
+            };
+            _ProcessController.OnProcessEnd += () =>
+            {
+                ResetCommandSetting();
+                UpdateControll();
+                _CommandController.UpdateProcess(_ProcessController?.Process);
+            };
+
             _CommandController.OnCommandExecuted += (command) =>
             {
                 CommandHistory_ListBox.Items.Add(command);
@@ -68,16 +85,10 @@ namespace ConsoleWrapper
         /// </summary>
         private void ProcessControl_Button_Click(object sender, EventArgs e)
         {
-            if (IsRunning)
-            {
-                KillProcess();
-                ResetCommandSetting();
-            }
-            else
-            {
-                StartProcess();
-                LoadCommandSetting();
-            }
+            string path = ExePath_TextBox.Text;
+            if (!File.Exists(path) || Path.GetExtension(path).ToLower() != ".exe") { return; }
+
+            _ProcessController.Switch(path);
         }
 
         /// <summary>
@@ -87,7 +98,7 @@ namespace ConsoleWrapper
         {
             ResetCommandSetting();
 
-            string? name = _Process?.ProcessName;
+            string? name = _ProcessController.ProcessName;
             if(name == null) { return; }
             if (!_CommandSettings.ContainsKey(name)) { return; }
 
@@ -116,7 +127,7 @@ namespace ConsoleWrapper
         /// </summary>
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!IsRunning) { return; }
+            if (!_ProcessController.IsRunning) { return; }
 
             var result = MessageBox.Show("プロセスが実行中です。閉じますか？", "ConsoleWrapper", 
                 MessageBoxButtons.YesNo, MessageBoxIcon.Information);
@@ -126,7 +137,7 @@ namespace ConsoleWrapper
                 return;
             }
 
-            KillProcess();
+            _ProcessController.Kill();
         }
 
         /// <summary>
@@ -183,7 +194,7 @@ namespace ConsoleWrapper
         /// </summary>
         private async void Command_ComboBox_KeyUp(object sender, KeyEventArgs e)
         {
-            if (_Process == null) { return; }
+            if (!_ProcessController.IsRunning) { return; }
             if (e.KeyCode != Keys.Enter) { return; }
 
             var command = Command_ComboBox.SelectedItem;
@@ -210,77 +221,13 @@ namespace ConsoleWrapper
         /// <param name="forceEnabled">強制的に切り替える場合に使用(true: running)</param>
         private void UpdateControll(bool? forceEnabled = null)
         {
-            bool isRunning = forceEnabled ?? IsRunning;
+            bool isRunning = forceEnabled ?? _ProcessController.IsRunning;
 
             ExePath_TextBox.Enabled = !isRunning;
             Command_ComboBox.Enabled = isRunning;
 
             ProcessControl_Button.Text = isRunning ? "Kill" : "Run";
             ProcessControl_Button.BackColor = isRunning ? Color.Salmon : Color.Chartreuse;
-        }
-
-        private void StartProcess()
-        {
-            _Process = new Process();
-
-            string path = ExePath_TextBox.Text;
-            _Process.StartInfo = new ProcessStartInfo(path)
-            {
-                CreateNoWindow = true,
-                UseShellExecute = false,
-
-                RedirectStandardInput = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-            };
-
-            _Process.OutputDataReceived += (sender, e) =>
-            {
-                Output_RichTextBox.Invoke((MethodInvoker)delegate
-                {
-                    Output_RichTextBox.SelectionLength = 0;
-                    Output_RichTextBox.SelectionColor = Color.Black;
-                    if (e.Data == null) { UpdateControll(false); }
-                    else { Output_RichTextBox.AppendText($"{e.Data}\n"); }
-                });
-            };
-            _Process.ErrorDataReceived += (sender, e) =>
-            {
-                Output_RichTextBox.Invoke((MethodInvoker)delegate
-                {
-                    Output_RichTextBox.SelectionLength = 0;
-                    Output_RichTextBox.SelectionColor = Color.Red;
-                    if (e.Data == null) { UpdateControll(false); }
-                    else { Output_RichTextBox.AppendText($"{e.Data}\n"); }
-                });
-            };
-
-            _Process.Start();
-            _CommandController.UpdateProcess(_Process);
-
-            // 標準出力の読み込み開始
-            _Process.BeginOutputReadLine();
-            _Process.BeginErrorReadLine();
-
-            UpdateControll();
-        }
-
-        private void KillProcess()
-        {
-            UpdateControll();
-
-            if (_Process == null) { return; }
-
-            if (!_Process.HasExited)
-            {
-                _Process.CancelOutputRead();
-                _Process.CancelErrorRead();
-                _Process.Kill();
-                _Process.WaitForExit();
-                _Process = null;
-            }
-
-            UpdateControll();
         }
 
         /// <summary>
@@ -322,7 +269,7 @@ namespace ConsoleWrapper
         /// <param name="e"></param>
         private async void CommandHistory_ListBox_DoubleClick(object sender, EventArgs e)
         {
-            if (!IsRunning) { return; }
+            if (!_ProcessController.IsRunning) { return; }
 
             var listBox = (ListBox)sender;
             var item = listBox.SelectedItem;
