@@ -38,13 +38,13 @@ namespace ConsoleWrapper
             {
                 LoadCommandSetting();
                 UpdateControll();
-                _CommandController.UpdateProcess(_ProcessController?.Process);
+                _CommandController.UpdateProcess(_ProcessController);
             };
             _ProcessController.OnProcessEnd += () =>
             {
                 ResetCommandSetting();
                 UpdateControll();
-                _CommandController.UpdateProcess(_ProcessController?.Process);
+                _CommandController.UpdateProcess(_ProcessController);
             };
 
             _CommandController.OnCommandExecuted += (command) =>

@@ -157,5 +157,16 @@ namespace ConsoleWrapper.Controller
                 Start();
             }
         }
+
+        /// <summary>
+        /// 標準入力
+        /// </summary>
+        /// <param name="query">コマンド</param>
+        public void Execute(string query)
+        {
+            if (!IsRunning) { return; }
+
+            _Process.StandardInput.WriteLine(query);
+        }
     }
 }

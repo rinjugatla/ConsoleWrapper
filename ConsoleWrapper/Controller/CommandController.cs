@@ -17,8 +17,14 @@ namespace ConsoleWrapper.Controller
         /// コマンド実行時のイベント BasicCommand, MacroCommand
         /// </summary>
         public event Action<object>? OnCommandExecuted;
-        private Process? _Process;
-        bool IsRunning => _Process != null && !_Process.HasExited;
+        /// <summary>
+        /// プロセス管理
+        /// </summary>
+        private ProcessController _ProcessController;
+        /// <summary>
+        /// プロセスが実行中か
+        /// </summary>
+        bool IsRunning => _ProcessController.IsRunning;
 
         private enum CommandType
         {
@@ -34,9 +40,9 @@ namespace ConsoleWrapper.Controller
             Unknown
         }
 
-        public void UpdateProcess(Process? process)
+        public void UpdateProcess(ProcessController controller)
         {
-            _Process = process;
+            _ProcessController = controller;
         }
 
         public async Task Execute(object? command)
@@ -122,7 +128,7 @@ namespace ConsoleWrapper.Controller
         /// </summary>
         private void ExecuteConsoleCommand(Command command)
         {
-            _Process?.StandardInput.WriteLine(command.Query);
+            _ProcessController.Execute(command.Query);
         }
 
         /// <summary>
@@ -203,15 +209,9 @@ namespace ConsoleWrapper.Controller
         /// <param name="command"></param>
         private void SystemCommand_Kill()
         {
-            if(_Process == null) { return; }
+            if(!IsRunning) { return; }
 
-            if (!_Process.HasExited)
-            {
-                _Process.CancelOutputRead();
-                _Process.CancelErrorRead();
-                _Process.Kill();
-                _Process.WaitForExit();
-            }
+            _ProcessController.Kill();
         }
 
         /// <summary>
