@@ -226,6 +226,7 @@ namespace ConsoleWrapper
             ExePath_TextBox.Enabled = !isRunning;
             Command_ComboBox.Enabled = isRunning;
 
+            ExePath_TextBox.Text = _ProcessController.ExePath;
             ProcessControl_Button.Text = isRunning ? "Kill" : "Run";
             ProcessControl_Button.BackColor = isRunning ? Color.Salmon : Color.Chartreuse;
         }

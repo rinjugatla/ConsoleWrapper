@@ -37,6 +37,7 @@ namespace ConsoleWrapper.Controller
         {
             Wait,
             Kill,
+            Start,
             Unknown
         }
 
@@ -90,8 +91,6 @@ namespace ConsoleWrapper.Controller
 
             foreach (var command in macro.Commands)
             {
-                // コマンドで終了している可能性があるのでチェック
-                if (!IsRunning || command == null) { return; }
 
                 var type = AnalyzeCommandType(command.Type);
                 OnCommandExecuted?.Invoke(command);
@@ -143,6 +142,8 @@ namespace ConsoleWrapper.Controller
                     await SystemCommand_Wait(command.Query); break;
                 case SystemCommandType.Kill:
                     SystemCommand_Kill();  break;
+                case SystemCommandType.Start:
+                    SystemCommand_Start(command.Query); break;
                 default:
                     break;
             }
@@ -160,6 +161,8 @@ namespace ConsoleWrapper.Controller
                     return SystemCommandType.Wait;
                 case "kill":
                     return SystemCommandType.Kill;
+                case "start":
+                    return SystemCommandType.Start;
                 default:
                     return SystemCommandType.Unknown;
             }
@@ -215,7 +218,7 @@ namespace ConsoleWrapper.Controller
         }
 
         /// <summary>
-        /// 
+        /// プロセスを実行
         /// </summary>
         /// <remarks>-force, -fで実行中のプロセスをKillしてから実行</remarks>
         /// <param name="query"></param>
@@ -231,6 +234,8 @@ namespace ConsoleWrapper.Controller
             if (IsRunning && isForce) { SystemCommand_Kill(); }
             else if (IsRunning) { return; }
 
+            _ProcessController.SetExePath(path);
+            _ProcessController.Start();
         }
     }
 }

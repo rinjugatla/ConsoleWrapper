@@ -31,6 +31,10 @@ namespace ConsoleWrapper.Controller
         /// </summary>
         public bool IsRunning => _Process != null && !_Process.HasExited;
         /// <summary>
+        /// 実行ファイルパス
+        /// </summary>
+        public string? ExePath => _ExePath;
+        /// <summary>
         /// プロセス名
         /// </summary>
         public string? ProcessName => _ExePath != null ? Path.GetFileNameWithoutExtension(_ExePath) : null;
