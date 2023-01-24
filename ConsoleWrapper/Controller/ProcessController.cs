@@ -37,7 +37,7 @@ namespace ConsoleWrapper.Controller
         /// <summary>
         /// プロセス名
         /// </summary>
-        public string? ProcessName => _ExePath != null ? Path.GetFileNameWithoutExtension(_ExePath) : null;
+        public string? ProcessName => ExePath != null ? Path.GetFileNameWithoutExtension(ExePath) : null;
 
         /// <summary>
         /// ログ出力コントロール
@@ -67,10 +67,10 @@ namespace ConsoleWrapper.Controller
         public void Start()
         {
             if (IsRunning) { return; }
-            if (_ExePath == null || !File.Exists(_ExePath)) { return; }
+            if (ExePath == null || !File.Exists(ExePath)) { return; }
 
             Process = new Process();
-            Process.StartInfo = new ProcessStartInfo(_ExePath)
+            Process.StartInfo = new ProcessStartInfo(ExePath)
             {
                 CreateNoWindow = true,
                 UseShellExecute = false,
