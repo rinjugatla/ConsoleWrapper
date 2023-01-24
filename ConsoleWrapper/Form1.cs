@@ -120,6 +120,7 @@ namespace ConsoleWrapper
         private void ResetCommandSetting()
         {
             Command_ComboBox.Items.Clear();
+            Command_ComboBox.Text = "";
         }
 
         /// <summary>
