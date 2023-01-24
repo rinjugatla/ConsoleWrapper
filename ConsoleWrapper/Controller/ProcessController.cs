@@ -25,32 +25,24 @@ namespace ConsoleWrapper.Controller
         /// <summary>
         /// プロセス
         /// </summary>
-        public Process? Process => _Process;
+        public Process? Process { get; private set; }
         /// <summary>
         /// プロセスが実行中か
         /// </summary>
-        public bool IsRunning => _Process != null && !_Process.HasExited;
+        public bool IsRunning => Process != null && !Process.HasExited;
         /// <summary>
         /// 実行ファイルパス
         /// </summary>
-        public string? ExePath => _ExePath;
+        public string? ExePath { get; private set; }
         /// <summary>
         /// プロセス名
         /// </summary>
         public string? ProcessName => _ExePath != null ? Path.GetFileNameWithoutExtension(_ExePath) : null;
 
         /// <summary>
-        /// 実行中のプロセス
-        /// </summary>
-        private Process? _Process;
-        /// <summary>
         /// ログ出力コントロール
         /// </summary>
         private RichTextBox _Output_RichTextBox;
-        /// <summary>
-        /// 実行ファイルパス
-        /// </summary>
-        private string _ExePath;
         
         public ProcessController(RichTextBox box)
         {
@@ -66,7 +58,7 @@ namespace ConsoleWrapper.Controller
             if (IsRunning) { return; }
             if(path == null || !File.Exists(path)) { return; }
 
-            _ExePath = path;
+            ExePath = path;
         }
 
         /// <summary>
@@ -77,8 +69,8 @@ namespace ConsoleWrapper.Controller
             if (IsRunning) { return; }
             if (_ExePath == null || !File.Exists(_ExePath)) { return; }
 
-            _Process = new Process();
-            _Process.StartInfo = new ProcessStartInfo(_ExePath)
+            Process = new Process();
+            Process.StartInfo = new ProcessStartInfo(_ExePath)
             {
                 CreateNoWindow = true,
                 UseShellExecute = false,
@@ -88,7 +80,7 @@ namespace ConsoleWrapper.Controller
                 RedirectStandardError = true,
             };
 
-            _Process.OutputDataReceived += (sender, e) =>
+            Process.OutputDataReceived += (sender, e) =>
             {
                 _Output_RichTextBox.Invoke((MethodInvoker)delegate
                 {
@@ -97,12 +89,12 @@ namespace ConsoleWrapper.Controller
                     if (e.Data == null)
                     {
                         OnProcessEnd?.Invoke();
-                        _Process = null;
+                        Process = null;
                     }
                     else { _Output_RichTextBox.AppendText($"{e.Data}\n"); }
                 });
             };
-            _Process.ErrorDataReceived += (sender, e) =>
+            Process.ErrorDataReceived += (sender, e) =>
             {
                 _Output_RichTextBox.Invoke((MethodInvoker)delegate
                 {
@@ -111,17 +103,17 @@ namespace ConsoleWrapper.Controller
                     if (e.Data == null)
                     {
                         OnProcessEnd?.Invoke();
-                        _Process = null;
+                        Process = null;
                     }
                     else { _Output_RichTextBox.AppendText($"{e.Data}\n"); }
                 });
             };
 
-            _Process.Start();
+            Process.Start();
 
             // 標準出力の読み込み開始
-            _Process.BeginOutputReadLine();
-            _Process.BeginErrorReadLine();
+            Process.BeginOutputReadLine();
+            Process.BeginErrorReadLine();
 
             OnProcessStart?.Invoke();
         }
@@ -131,17 +123,17 @@ namespace ConsoleWrapper.Controller
         /// </summary>
         public void Kill()
         {
-            if (_Process == null) { return; }
+            if (Process == null) { return; }
 
             OnUpdateProcess?.Invoke(IsRunning);
 
-            if (!_Process.HasExited)
+            if (!Process.HasExited)
             {
-                _Process.CancelOutputRead();
-                _Process.CancelErrorRead();
-                _Process.Kill();
-                _Process.WaitForExit();
-                _Process = null;
+                Process.CancelOutputRead();
+                Process.CancelErrorRead();
+                Process.Kill();
+                Process.WaitForExit();
+                Process = null;
             }
 
             OnUpdateProcess?.Invoke(IsRunning);
@@ -170,7 +162,7 @@ namespace ConsoleWrapper.Controller
         {
             if (!IsRunning) { return; }
 
-            _Process.StandardInput.WriteLine(query);
+            Process.StandardInput.WriteLine(query);
         }
     }
 }
